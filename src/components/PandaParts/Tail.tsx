@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useAppStore } from '../../stores/appStore';
 
-const tailMat = new THREE.MeshToonMaterial({ color: '#f5f5f0' });
+const tailMat = new THREE.MeshToonMaterial({ color: '#ffffff' });
 
 export function Tail() {
   const tailRef = useRef<THREE.Mesh>(null);

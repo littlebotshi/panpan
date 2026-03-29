@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useSpring, animated } from '@react-spring/three';
 import * as THREE from 'three';
@@ -7,16 +7,16 @@ import { STATE_POSES } from '../../animation/bodyAnimations';
 import { SPRING_CONFIGS } from '../../animation/springConfigs';
 import { lerp } from '../../animation/disneyUtils';
 
-const blackMat = new THREE.MeshToonMaterial({ color: '#1a1a1a' });
-const whiteMat = new THREE.MeshToonMaterial({ color: '#f5f5f0' });
-const eyeWhiteMat = new THREE.MeshToonMaterial({ color: '#ffffff' });
-const pupilMat = new THREE.MeshToonMaterial({ color: '#111111' });
+// Proper panda colors: pure black and pure white
+const blackFur = new THREE.MeshToonMaterial({ color: '#0a0a0a' });
+const whiteFur = new THREE.MeshToonMaterial({ color: '#ffffff' });
+const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: '#ffffff' });
+const pupilMat = new THREE.MeshBasicMaterial({ color: '#0a0a0a' });
 const highlightMat = new THREE.MeshBasicMaterial({ color: '#ffffff' });
-const noseMat = new THREE.MeshToonMaterial({ color: '#2a2a2a' });
-const mouthMat = new THREE.MeshToonMaterial({ color: '#cc4444', side: THREE.DoubleSide });
-const patchMat = new THREE.MeshToonMaterial({ color: '#222222' });
-const cheekMat = new THREE.MeshToonMaterial({ color: '#ffb5b5', transparent: true, opacity: 0.5 });
-const innerEarMat = new THREE.MeshToonMaterial({ color: '#333333' });
+const noseMat = new THREE.MeshToonMaterial({ color: '#0a0a0a' });
+const mouthMat = new THREE.MeshToonMaterial({ color: '#cc3333', side: THREE.DoubleSide });
+const cheekMat = new THREE.MeshToonMaterial({ color: '#ff9999', transparent: true, opacity: 0.45 });
+const innerEarMat = new THREE.MeshToonMaterial({ color: '#444444' });
 
 export function Head() {
   const headRef = useRef<THREE.Group>(null);
@@ -39,7 +39,6 @@ export function Head() {
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
 
-    // Blinking
     blinkRef.current += clock.getDelta();
     let blinkScale = 1;
     if (blinkRef.current > nextBlinkRef.current) {
@@ -61,7 +60,7 @@ export function Head() {
     if (mouthRef.current) {
       const targetOpen = animationState === 'talking' ? mouthAmplitude * 0.15 : pose.mouthOpen * 0.1;
       const currentScale = mouthRef.current.scale.y;
-      mouthRef.current.scale.y = lerp(currentScale, 0.03 + targetOpen, 0.4);
+      mouthRef.current.scale.y = lerp(currentScale, 0.04 + targetOpen, 0.4);
     }
 
     if (headRef.current && animationState === 'talking') {
@@ -73,86 +72,87 @@ export function Head() {
   return (
     <animated.group
       ref={headRef}
-      position={[0, 1.35, 0]}
+      position={[0, 1.45, 0]}
       rotation={spring.rotation as any}
     >
-      {/* Head sphere */}
-      <mesh material={blackMat}>
-        <sphereGeometry args={[0.75, 32, 32]} />
+      {/* Head — bigger and rounder like Po, slightly wider */}
+      <mesh material={whiteFur} scale={[1.05, 1, 1]}>
+        <sphereGeometry args={[0.82, 32, 32]} />
       </mesh>
 
-      {/* White face patch — flattened so features sit on top */}
-      <mesh position={[0, -0.08, 0.55]} scale={[1, 1, 0.4]} material={whiteMat}>
-        <sphereGeometry args={[0.55, 32, 32]} />
+      {/* Black top of head — cap that wraps around */}
+      <mesh position={[0, 0.2, -0.1]} material={blackFur} scale={[1.08, 0.85, 1.05]}>
+        <sphereGeometry args={[0.72, 32, 32]} />
       </mesh>
 
-      {/* Left eye patch — teardrop shape, tilted inward */}
-      <mesh position={[-0.22, 0.06, 0.64]} rotation={[0, 0.15, 0.4]} scale={[1.1, 1.4, 0.3]} material={patchMat}>
-        <sphereGeometry args={[0.17, 16, 16]} />
+      {/* Left eye patch — iconic panda teardrop, pure black */}
+      <mesh position={[-0.25, 0.02, 0.6]} rotation={[0, 0.1, 0.45]} scale={[1.15, 1.5, 0.35]} material={blackFur}>
+        <sphereGeometry args={[0.18, 16, 16]} />
       </mesh>
 
       {/* Right eye patch */}
-      <mesh position={[0.22, 0.06, 0.64]} rotation={[0, -0.15, -0.4]} scale={[1.1, 1.4, 0.3]} material={patchMat}>
-        <sphereGeometry args={[0.17, 16, 16]} />
+      <mesh position={[0.25, 0.02, 0.6]} rotation={[0, -0.1, -0.45]} scale={[1.15, 1.5, 0.35]} material={blackFur}>
+        <sphereGeometry args={[0.18, 16, 16]} />
       </mesh>
 
-      {/* Left eye — BIG for cuteness */}
-      <group ref={leftEyeRef} position={[-0.2, 0.08, 0.73]}>
+      {/* Left eye — BIG, round, expressive like Po */}
+      <group ref={leftEyeRef} position={[-0.23, 0.04, 0.72]}>
+        {/* Eye white */}
         <mesh material={eyeWhiteMat}>
-          <sphereGeometry args={[0.14, 16, 16]} />
+          <sphereGeometry args={[0.15, 20, 20]} />
         </mesh>
-        {/* Pupil — large, slightly inward for cute look */}
-        <mesh position={[0.02, 0, 0.08]} material={pupilMat}>
-          <sphereGeometry args={[0.09, 16, 16]} />
+        {/* Large pupil with slight inward gaze */}
+        <mesh position={[0.02, 0, 0.09]} material={pupilMat}>
+          <sphereGeometry args={[0.1, 20, 20]} />
         </mesh>
-        {/* Big sparkle highlight — Disney magic */}
-        <mesh position={[0.05, 0.05, 0.12]} material={highlightMat}>
-          <sphereGeometry args={[0.035, 8, 8]} />
+        {/* Big sparkle — top right of pupil */}
+        <mesh position={[0.06, 0.06, 0.13]} material={highlightMat}>
+          <sphereGeometry args={[0.04, 10, 10]} />
         </mesh>
-        {/* Small secondary sparkle */}
-        <mesh position={[0.0, 0.02, 0.13]} material={highlightMat}>
-          <sphereGeometry args={[0.018, 8, 8]} />
+        {/* Small sparkle */}
+        <mesh position={[0.0, 0.02, 0.14]} material={highlightMat}>
+          <sphereGeometry args={[0.02, 8, 8]} />
         </mesh>
       </group>
 
       {/* Right eye */}
-      <group ref={rightEyeRef} position={[0.2, 0.08, 0.73]}>
+      <group ref={rightEyeRef} position={[0.23, 0.04, 0.72]}>
         <mesh material={eyeWhiteMat}>
-          <sphereGeometry args={[0.14, 16, 16]} />
+          <sphereGeometry args={[0.15, 20, 20]} />
         </mesh>
-        <mesh position={[-0.02, 0, 0.08]} material={pupilMat}>
-          <sphereGeometry args={[0.09, 16, 16]} />
+        <mesh position={[-0.02, 0, 0.09]} material={pupilMat}>
+          <sphereGeometry args={[0.1, 20, 20]} />
         </mesh>
-        <mesh position={[-0.02, 0.05, 0.12]} material={highlightMat}>
-          <sphereGeometry args={[0.035, 8, 8]} />
+        <mesh position={[-0.03, 0.06, 0.13]} material={highlightMat}>
+          <sphereGeometry args={[0.04, 10, 10]} />
         </mesh>
-        <mesh position={[0.02, 0.02, 0.13]} material={highlightMat}>
-          <sphereGeometry args={[0.018, 8, 8]} />
+        <mesh position={[0.02, 0.02, 0.14]} material={highlightMat}>
+          <sphereGeometry args={[0.02, 8, 8]} />
         </mesh>
       </group>
 
-      {/* Nose — cute oval */}
-      <mesh position={[0, -0.06, 0.78]} scale={[1.3, 0.9, 0.8]} material={noseMat}>
-        <sphereGeometry args={[0.055, 12, 12]} />
+      {/* Nose — round black button nose */}
+      <mesh position={[0, -0.12, 0.78]} material={noseMat} scale={[1.3, 1, 0.9]}>
+        <sphereGeometry args={[0.06, 12, 12]} />
       </mesh>
 
-      {/* Mouth — wider smile */}
-      <mesh ref={mouthRef} position={[0, -0.16, 0.74]} scale={[0.2, 0.03, 0.08]} material={mouthMat}>
+      {/* Mouth — friendly smile */}
+      <mesh ref={mouthRef} position={[0, -0.22, 0.72]} scale={[0.2, 0.04, 0.08]} material={mouthMat}>
         <sphereGeometry args={[1, 16, 8]} />
       </mesh>
 
-      {/* Blush cheeks — pink circles */}
-      <mesh position={[-0.35, -0.08, 0.6]} material={cheekMat}>
-        <sphereGeometry args={[0.08, 12, 12]} />
+      {/* Rosy blush cheeks — cute! */}
+      <mesh position={[-0.38, -0.12, 0.55]} material={cheekMat}>
+        <sphereGeometry args={[0.1, 12, 12]} />
       </mesh>
-      <mesh position={[0.35, -0.08, 0.6]} material={cheekMat}>
-        <sphereGeometry args={[0.08, 12, 12]} />
+      <mesh position={[0.38, -0.12, 0.55]} material={cheekMat}>
+        <sphereGeometry args={[0.1, 12, 12]} />
       </mesh>
 
-      {/* Left ear */}
-      <Ear position={[-0.48, 0.55, -0.05]} />
+      {/* Left ear — round, black */}
+      <Ear position={[-0.52, 0.6, -0.1]} />
       {/* Right ear */}
-      <Ear position={[0.48, 0.55, -0.05]} />
+      <Ear position={[0.52, 0.6, -0.1]} />
     </animated.group>
   );
 }
@@ -169,10 +169,10 @@ function Ear({ position }: { position: [number, number, number] }) {
 
   return (
     <group ref={earRef} position={position}>
-      <mesh material={blackMat}>
+      <mesh material={blackFur}>
         <sphereGeometry args={[0.22, 16, 16]} />
       </mesh>
-      <mesh position={[0, 0, 0.05]} material={innerEarMat} scale={[0.6, 0.6, 0.5]}>
+      <mesh position={[0, 0, 0.06]} material={innerEarMat} scale={[0.55, 0.55, 0.4]}>
         <sphereGeometry args={[0.22, 12, 12]} />
       </mesh>
     </group>

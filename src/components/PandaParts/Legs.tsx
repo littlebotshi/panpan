@@ -3,8 +3,8 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useAppStore } from '../../stores/appStore';
 
-const legMat = new THREE.MeshToonMaterial({ color: '#1a1a1a' });
-const padMat = new THREE.MeshToonMaterial({ color: '#e8d5c4' });
+const legMat = new THREE.MeshToonMaterial({ color: '#0a0a0a' });
+const padMat = new THREE.MeshToonMaterial({ color: '#f0e0d0' });
 
 export function Legs() {
   return (
@@ -37,19 +37,19 @@ function Leg({ position, side }: { position: [number, number, number]; side: 'le
 
   return (
     <group ref={legRef} position={position}>
-      {/* Leg */}
+      {/* Stubby chubby leg */}
       <mesh material={legMat}>
-        <capsuleGeometry args={[0.18, 0.35, 8, 16]} />
+        <capsuleGeometry args={[0.22, 0.3, 8, 16]} />
       </mesh>
 
-      {/* Foot */}
-      <mesh position={[0, -0.3, 0.08]} scale={[1, 0.7, 1.2]} material={legMat}>
-        <sphereGeometry args={[0.2, 16, 16]} />
+      {/* Round foot */}
+      <mesh position={[0, -0.28, 0.1]} scale={[1.1, 0.7, 1.3]} material={legMat}>
+        <sphereGeometry args={[0.22, 16, 16]} />
       </mesh>
 
-      {/* Foot pad */}
-      <mesh position={[0, -0.32, 0.18]} material={padMat}>
-        <sphereGeometry args={[0.1, 8, 8]} />
+      {/* Foot pad — pink */}
+      <mesh position={[0, -0.3, 0.2]} material={padMat}>
+        <sphereGeometry args={[0.11, 8, 8]} />
       </mesh>
     </group>
   );

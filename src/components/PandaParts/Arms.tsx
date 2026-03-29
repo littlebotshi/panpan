@@ -6,8 +6,8 @@ import { useAppStore } from '../../stores/appStore';
 import { STATE_POSES } from '../../animation/bodyAnimations';
 import { SPRING_CONFIGS } from '../../animation/springConfigs';
 
-const armMat = new THREE.MeshToonMaterial({ color: '#1a1a1a' });
-const pawMat = new THREE.MeshToonMaterial({ color: '#e8d5c4' });
+const armMat = new THREE.MeshToonMaterial({ color: '#0a0a0a' });
+const pawMat = new THREE.MeshToonMaterial({ color: '#f0e0d0' });
 
 export function Arms() {
   const animationState = useAppStore((s) => s.animationState);
@@ -75,19 +75,19 @@ function Arm({
       position={basePosition}
       rotation={spring.rotation as any}
     >
-      {/* Upper arm */}
-      <mesh material={armMat} rotation={[0, 0, 0]}>
-        <capsuleGeometry args={[0.15, 0.5, 8, 16]} />
+      {/* Chubby arm */}
+      <mesh material={armMat}>
+        <capsuleGeometry args={[0.18, 0.45, 8, 16]} />
       </mesh>
 
-      {/* Paw */}
-      <mesh position={[0, -0.4, 0]} material={armMat}>
-        <sphereGeometry args={[0.16, 16, 16]} />
+      {/* Round paw */}
+      <mesh position={[0, -0.38, 0]} material={armMat}>
+        <sphereGeometry args={[0.19, 16, 16]} />
       </mesh>
 
-      {/* Paw pad */}
-      <mesh position={[0, -0.4, 0.1]} material={pawMat}>
-        <sphereGeometry args={[0.08, 8, 8]} />
+      {/* Paw pad — pink */}
+      <mesh position={[0, -0.38, 0.12]} material={pawMat}>
+        <sphereGeometry args={[0.09, 8, 8]} />
       </mesh>
     </animated.group>
   );
