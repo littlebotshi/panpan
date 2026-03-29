@@ -4,9 +4,9 @@
     {
       "name": "panpan-dev",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite"],
-      "port": 5173,
-      "autoPort": true
+      "runtimeArgs": ["vite", "--port", "4567"],
+      "port": 4567,
+      "autoPort": false
     }
   ]
 }
