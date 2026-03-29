@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Scene } from './components/Scene';
+import { RivePanda } from './components/RivePanda';
 import { ChatPanel } from './components/ChatPanel';
 import { ChatBubble } from './components/ChatBubble';
 import { StatusIndicator } from './components/StatusIndicator';
@@ -24,7 +24,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Scene />
+      <RivePanda />
       <StatusIndicator />
       <ChatBubble />
       <ChatPanel />
